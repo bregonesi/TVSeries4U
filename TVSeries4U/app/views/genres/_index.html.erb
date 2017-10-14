@@ -1,0 +1,18 @@
+<%= will_paginate @genres %>
+
+<% if @genres.empty? %>
+  <h5 class="text-center">No genres to show.</h3>
+<% end %>
+
+<ul class="genres">
+  <% @genres.each do |genre| %>
+    <li class="h-title">
+      <%= link_to genre.name, genre %>
+      <% if logged_in && current_user.admin? %>
+        <%= link_to "Delete Genre", genre, method: :delete, data: { confirm: "You sure?" }, class: "btn btn-xs btn-danger"%>
+      <% end %>
+    </li>
+  <% end %>
+</ul>
+
+<%= will_paginate @genres %>

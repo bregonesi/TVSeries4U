@@ -1,0 +1,17 @@
+<% if @members.empty? %>
+  <h5 class="text-center">No users to show.</h3>
+<% end %>
+
+<ul class="users no-padding">
+  <% @members.each do |member| %>
+  	<% if member.user.nil? %>
+  		<% next %>
+  	<% end %>
+    <li class="h-title">
+      <%= link_to member.user.name, member.user %>
+      <% if logged_in && current_user.family == member.family && (current_user.is_parent? || current_user == member.user) %>
+        <%= link_to "Delete User", family_family_member_path(member.family, member), method: :delete, data: { confirm: "You sure?" }, class: "btn btn-xs btn-danger"%>
+      <% end %>
+    </li>
+  <% end %>
+</ul>

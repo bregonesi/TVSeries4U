@@ -1,0 +1,34 @@
+<%#= will_paginate @news %>
+
+<% if @news.empty? %>
+  <h5 class="text-center">No news to show.</h3>
+<% end %>
+
+<ul class="news">
+  <% @news.each do |new| %>
+    <li class="">
+      <div class="col-xs-2">
+      	<% user = User.find(new["user_id"]) %>
+        <%= link_to "By: #{user.name}", user %>
+        <% if new["tipo"] == "serie" %>
+        	<br><br>
+      		<% belongs = Serie.find(new["serie_id"]) %>
+        	<%= link_to "To serie: #{belongs.title}", belongs %>
+        <% elsif new["tipo"] == "actor" %>
+        	<br><br>
+      		<% belongs = Actor.find(new["serie_id"]) %>
+        	<%= link_to "To actor: #{belongs.full_name}", belongs %>
+        <% elsif new["tipo"] == "director" %>
+        	<br><br>
+      		<% belongs = Director.find(new["serie_id"]) %>
+        	<%= link_to "To director: #{belongs.full_name}", belongs %>
+        <% end %>
+      </div>
+      <div class="h-title col-xs-10">
+        <%= simple_format(raw new["body"]) %>
+      </div>
+    </li>
+  <% end %>
+</ul>
+
+<%#= will_paginate @news %>

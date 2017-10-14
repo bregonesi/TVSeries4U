@@ -1,0 +1,109 @@
+<header class="navbar navbar-fixed-top navbar-inverse">
+  <div class="container">
+    <div class="navbar-header">
+      <%= link_to "TVSeries4u", root_path, id: "logo", class: "navbar-brand" %>
+    </div>
+    <nav>
+      <ul class="nav navbar-nav navbar-right">
+        <!-- <li><%= link_to "Home", root_path %></li> -->
+        <!-- <li><%= link_to "Help", "#" %></li> -->
+        <% if logged_in %>
+          <li><%= link_to "Series", series_path %></li>
+        <% end %>
+        <li><%= link_to "News feed", news_feed_path %></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            Others <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li><%= link_to "Users", users_path %></li>
+            <li><%= link_to "Families", families_path %></li>
+            <li><%= link_to "Actors", actors_path %></li>
+            <li><%= link_to "Directors", directors_path %></li>
+            <li><%= link_to "Genres", genres_path %></li>
+          </ul>
+        </li>
+        <% if logged_in %>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              Account <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <% if current_user.has_family? %>
+                <li><%= link_to "Family", current_user.family %></li>
+              <% end %>
+              <li><%= link_to "Profile", current_user %></li>
+              <li><%= link_to "Settings", edit_user_path(current_user) %></li>
+
+              <li class="divider"></li>
+              <li><%= link_to "Log out", logout_path, method: :delete %></li>
+            </ul>
+          </li>
+        <% else %>
+          <li><%= link_to "Log in", login_path %></li>
+        <% end %>
+      </ul>
+
+      <div class="col-lg-5 navbar-right">
+        <div class="navbar-form ">
+          <%= form_tag root_path, :method => "get", id: "serie-search-form" do %>
+            <span class="input-group">
+              <%= text_field_tag :search, params[:search] || params[:serie_search], placeholder: "Search Series", class: "form-control" %>
+              <span class="input-group-btn">
+                <%= button_tag :name => nil, :type => "button", class: "btn btn-default dropdown-toggle", "data-toggle": "dropdown" do %>
+                    <span class="caret"></span>
+                <% end %>
+                <ul id="search_options" class="dropdown-menu">
+                  <li><a href="#" data-value="serie_name" tabIndex="-1"><input type="checkbox" <%= params[:serie_name] == "0" && "" || ", checked" %> />&nbsp;Serie name</a></li>
+                  <li><a href="#" data-value="genres" tabIndex="-1"><input type="checkbox" <%= params[:genres] == "1" && ", checked" %> />&nbsp;Genres</a></li>
+                  <li><a href="#" data-value="actors" tabIndex="-1"><input type="checkbox" <%= params[:actors] == "1" && ", checked" %> />&nbsp;Actors</a></li>
+                  <li><a href="#" data-value="directors" tabIndex="-1"><input type="checkbox" <%= params[:directors] == "1" && ", checked" %> />&nbsp;Directors</a></li>
+                  <li><a href="#" data-value="countries" tabIndex="-1"><input type="checkbox" <%= params[:countries] == "1" && ", checked" %> />&nbsp;Countries</a></li>
+                  <li><a href="#" data-value="languages" tabIndex="-1"><input type="checkbox" <%= params[:languages] == "1" && ", checked" %> />&nbsp;Languages</a></li>
+                  <li><a href="#" data-value="subtitles" tabIndex="-1"><input type="checkbox" <%= params[:subtitles] == "1" && ", checked" %> />&nbsp;Subtitles</a></li>
+                </ul>
+                <%= button_tag :name => nil, class: "btn btn-default" do %>
+                  <i class="glyphicon glyphicon-search"></i>
+                <% end %>
+              </span>
+              <%= hidden_field_tag :serie_name, params[:serie_name] %>
+              <%= hidden_field_tag :genres, params[:genres] %>
+              <%= hidden_field_tag :actors, params[:actors] %>
+              <%= hidden_field_tag :directors, params[:directors] %>
+              <%= hidden_field_tag :countries, params[:countries] %>
+              <%= hidden_field_tag :languages, params[:languages] %>
+              <%= hidden_field_tag :subtitles, params[:subtitles] %>
+            </span>
+          <% end %>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  $( '.navbar-form .dropdown-menu a' ).on( 'click', function( event ) {
+     var $target = $( event.currentTarget ),
+         $inp = $target.find( 'input' );
+
+     if ( $inp.prop('checked') ) {
+      $inp.prop( 'checked', false )
+     } else {
+      $inp.prop( 'checked', true )
+     }
+
+     $( event.target ).blur();
+
+     return false;
+  });
+
+  $('#serie-search-form').submit(function() {
+      $('.navbar-form .dropdown-menu a').children('input').each(function () {
+        var input = $(this).parent().attr('data-value')
+
+        $('#' + input).val($(this).prop('checked') ? 1 : 0);
+      });
+
+      return true;
+  });
+</script>

@@ -1,0 +1,15 @@
+<br>
+<div class="row">
+  <% if !@user.is_invited?(current_user.family) %>
+    <div class="col-xs-6">
+      <%= link_to "Invite as Parent", family_family_invites_path(current_user.family, id: @user, parent: true), method: :post, data: { confirm: "You sure?" }, class: "btn btn-success col-xs-12" %>
+    </div>
+    <div class="col-xs-6">
+      <%= link_to "Invite as Child", family_family_invites_path(current_user.family, id: @user, parent: false), method: :post, data: { confirm: "You sure?" }, class: "btn btn-success col-xs-12" %>
+    </div>
+  <% else %>
+    <div class="col-xs-12">
+      <%= button_tag "Pending family invitation", class: "btn btn-primary col-xs-12" %>
+    </div>
+  <% end %>
+</div>

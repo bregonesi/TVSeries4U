@@ -1,0 +1,16 @@
+<hr>
+<div>
+  <ul class="users no-padding">
+    <% @user.family_invites.each do |invitation| %>
+      <li class="h-title">
+        <%= link_to "Family: #{invitation.family.name} as #{invitation.parent ? 'parent' : 'child'}", invitation.family %>
+        <% if current_user == invitation.user %>
+          <div>
+            <%= link_to "Accept", family_family_members_path(invitation.family), method: :create, data: { confirm: "You sure?" }, class: "btn btn-xs btn-success"%>
+            <%= link_to "Delete", family_family_invite_path(invitation.family, invitation), method: :delete, data: { confirm: "You sure?" }, class: "btn btn-xs btn-danger"%>
+          </div>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</div>

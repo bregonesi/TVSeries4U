@@ -1,0 +1,33 @@
+<% provide(:title, @family.name) %>
+
+<div class="row text-center">
+  <div class="col-md-6 col-md-offset-3">
+    <% if logged_in && ((current_user.family == @family && current_user.is_parent?) || current_user.admin?) %>
+      <%= link_to "Edit Family", edit_family_path(@family), class: "btn btn-primary col-xs-3"%>
+      <%= link_to "Delete Family", @family, method: :delete, data: { confirm: "You sure?" }, class: "btn btn-danger col-xs-3 col-xs-offset-6"%>
+    <% end %>
+    <h1><%= @family.name %></h1>
+    <hr>
+    <div>
+      <div class="col-xs-6">
+        <h3>Parents</h3>
+        <%# if (current_user.family == @family && current_user.is_parent?) || current_user.admin? %>
+          <%#= link_to "Invite", "#", class: "btn btn-success btn-xs"%>
+        <%# end %>
+        <%= render "members_list", :@members => @family.family_members_parents %>
+      </div>
+      <div class="col-xs-6">
+        <h3>Childs</h3>
+        <%# if (current_user.family == @family && current_user.is_parent?) || current_user.admin? %>
+          <%#= link_to "Invite", "#", class: "btn btn-success btn-xs"%>
+        <%# end %>
+        <%= render "members_list", :@members => @family.family_members_childs %>
+      </div>
+    </div>
+    <div class="col-xs-12">
+      <hr>
+      <h3>Invitations</h3>
+      <%= render "members_list_invitations", :@invitations => @family.family_invites %>
+    </div>
+  </div>
+</div>

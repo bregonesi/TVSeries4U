@@ -1,0 +1,9 @@
+<% provide(:title, "Edit Season #{@season.name}") %>
+<% provide(:submit_text, "Save changes") %>
+
+<% content_for :show_serie_content do %>
+  <h1>Edit Season: <%= @season.name %></h1>
+  <%= render "form" %>
+<% end %>
+
+<%= render "series/show" %>

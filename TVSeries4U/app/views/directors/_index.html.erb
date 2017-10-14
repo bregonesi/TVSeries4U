@@ -1,0 +1,18 @@
+<%= will_paginate @directors %>
+
+<% if @directors.empty? %>
+  <h5 class="text-center">No directors to show.</h3>
+<% end %>
+
+<ul class="directors">
+  <% @directors.each do |director| %>
+    <li class="h-title">
+      <%= link_to director.full_name, director %>
+      <% if logged_in && current_user.admin? %>
+        <%= link_to "Delete Director", director, method: :delete, data: { confirm: "You sure?" }, class: "btn btn-xs btn-danger"%>
+      <% end %>
+    </li>
+  <% end %>
+</ul>
+
+<%= will_paginate @directors %>

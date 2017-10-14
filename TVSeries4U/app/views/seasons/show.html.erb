@@ -1,0 +1,57 @@
+<% content_for :show_serie_content do %>
+  <h2>Season #<%= @season.number %>: <%= !@season.name.empty? && @season.name || "Name not available" %>
+    <br>
+    <div class="contenedor-star">
+      <div class="fill_stars_rating" data-score=<%= @season.rating %>></div>
+    </div>
+
+    <% if logged_in %>
+     <% if @season.saw_by?(current_user) == 2 %>
+      <span class="glyphicon glyphicon-eye-open" aria-hidden="true" title="Seen season"></span>
+     <% else %>
+      <span class="glyphicon glyphicon-eye-close" aria-hidden="true" title="Not seen season"></span>
+     <% end %>
+    <% end %>
+  </h2>
+  <h5><%= !@season.description.empty? && @season.description || "Description not available" %></h3>
+  <br>
+  <h4>Release on: <%= @season.release || "Date not available" %></h4>
+  <hr>
+  <h3 class="h-title">Chapters
+      <div>
+        <% if @serie.can_edit(current_user) %>
+          <%= link_to "Add Chapter", new_serie_season_chapter_path(@serie, @season), class: "btn btn-primary btn-md" %>
+        <% end %>
+      </div>
+  </h3>
+  <% if @season.chapters.empty? %>
+    <ul class="list-group">
+      <li class="panel-footer list-group-item">
+        No chapters to show.
+      </li>
+    </ul>
+  <% else %>
+    <%= render "seasons/all_chapters" %>
+    <ul class="list-group">
+      <li class="panel-footer list-group-item">
+        Total: <%= pluralize(@season.chapters.count, "chapter") %>
+      </li>
+    </ul>
+  <% end %>
+  <hr>
+
+  <h3>Reviews</h3>
+  <div>
+    <% provide(:name, "season") %>
+    <%= render "shared/reviews", :@class => @season %>
+  </div>
+
+  <hr>
+
+  <%= link_to "Return to #{@serie.title}", serie_path(@serie), class: "btn btn-primary" %>
+  <% if @serie.can_edit(current_user) %>
+    <%= link_to "Edit Season", edit_serie_season_path(@serie, @season), class: "btn btn-success pull-right" %>
+  <% end %>
+<% end %>
+
+<%= render "series/show" %>

@@ -1,0 +1,70 @@
+<% if @serie.seasons.empty? %>
+	<h4>No seasons to show</h4>
+<% end %>
+
+<div class="panel-group" id="seasons_accordion">
+	<% @serie.seasons.sort_by { |serie| [serie.number]}.each do |season| %>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+		      <h4 class="panel-title h-title">
+		        <a data-toggle="collapse" data-parent="#seasons_accordion" href="#collapse<%= season.number %>">
+		        	<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+
+                    <% if logged_in %>
+                      <% if season.saw_by?(current_user) == 2 %>
+                        <span class="glyphicon glyphicon-eye-open" aria-hidden="true" title="Seen chapter"></span>
+                      <% else %>
+                        <span class="glyphicon glyphicon-eye-close" aria-hidden="true" title="Not seen chapter"></span>
+                      <% end %>
+                    <% end %>
+
+		        	<%= "Season #{season.number}: #{season.name || "Name not available."}" %>
+		        </a>
+		        <div>
+					<div class="fill_stars_rating" data-score=<%= season.rating %>></div>
+				</div>
+		        <div>
+		        	<small>
+		        		<%= link_to "(More info)", serie_season_path(@serie, season) %>
+		    		</small>
+					<% if @serie.can_edit(current_user) %>
+						<%= link_to "Edit Season", edit_serie_season_path(@serie, season), class: "btn btn-success btn-xs" %>
+						<%= link_to "Add Chapter", new_serie_season_chapter_path(@serie, season), class: "btn btn-primary btn-xs" %>
+					<% end %>
+		    	</div>
+		      </h4>
+		    </div>
+		    <div id="collapse<%= season.number %>" class="panel-collapse collapse">
+	      		<% if season.chapters.empty? %>
+	        		<div class="panel-footer">
+	      				No chapters to show.
+	      			</div>
+	      		<% else %>
+				    <%= render "seasons/all_chapters", :@season => season %>
+	  				<div class="panel-footer">
+	  					Total: <%= pluralize(season.chapters.count, "chapter") %>
+	  				</div>
+	  			<% end %>
+		    </div>
+		</div>
+	<% end %>
+</div>
+
+<script>
+	$('#seasons_accordion .panel-collapse').on('shown.bs.collapse', function () {
+    	$(this).prev().find(".glyphicon:first-of-type").removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
+	});
+
+	$('#seasons_accordion .panel-collapse').on('hidden.bs.collapse', function () {
+    	$(this).prev().find(".glyphicon:first-of-type").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
+	});
+
+    $('.fill_stars_rating').empty().raty({
+      path: '/assets/',
+      readOnly: true,
+      width: 100%,
+      score: function(){
+        return $(this).attr('data-score');
+      }
+    });
+</script>

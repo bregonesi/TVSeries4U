@@ -1,0 +1,14 @@
+// Place all the styles related to the chapters controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+/* Show chapters */
+.h-title a:hover:not(.btn), a:hover.glyphicon {
+	color: inherit;
+	background-color: inherit;
+	text-decoration: none;
+}
+
+a.glyphicon {
+	color: inherit;
+}

@@ -1,0 +1,28 @@
+<ul class="series">
+  <br>
+  <div>
+    <%= link_to "Add Serie", new_serie_path, class: "btn btn-success" %>
+  </div>
+  
+  <hr>
+
+  <div>
+    <h3 class="text-center h-title">
+      <% opciones = [
+                      {id: 1, name: "System series", disabled: false},
+                      {id: 2, name: "My series", disabled: !@my_series.empty? ? false : true},
+                      {id: 3, name: "Entire seen series", disabled: !@entire_seen.empty? ? false : true},
+                      {id: 4, name: "Half seen series", disabled: !@half_seen.empty? ? false : true},
+                      {id: 5, name: "Family series", disabled: !@family_series.empty? ? false : true}
+                     ] %>
+
+      <%= form_tag series_path, id: "show_id", :method => "get", class: "form-inline" do %>
+        Show: 
+        <%= select_tag "show_id", options_for_select(opciones.map{|x| [x[:name], x[:id]]}, disabled: opciones.map{|x| x[:id] if x[:disabled]}.compact, selected: params[:show_id] || opciones.map{|x| x[:id] if !x[:disabled] and x[:id] > 1}.compact.min || 1 ), :onchange => ("javascript: document.getElementById('show_id').submit();"), class: "form-control" %>
+      <% end %>
+    </h3>
+
+    <%= render 'series/serie' %>
+  </div>
+
+</ul>

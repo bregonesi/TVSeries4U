@@ -1,0 +1,21 @@
+<% provide(:title, "Contact") %>
+<h1>Contact</h1>
+
+<% data = [
+            ["Nombre", "Github", "Email"],
+            ["<a target='_blank' href='users/2'>Rodrigo Antonio Orpis</a>", "<a target='_blank' href='https://github.com/rorpis'>rorpis</a>", "<a href='mailto:raorpis@uc.cl' target='_top'>raorpis@uc.cl</a>"],
+            ["<a target='_blank' href='users/3'>Benjamín Andrés Regonesi</a>", "<a target='_blank' href='https://github.com/bregonesi'>bregonesi</a>", "<a href='mailto:baregonesi@uc.cl' target='_top'>baregonesi@uc.cl</a>"],
+            ["<a target='_blank' href='users/1'>Manuel Enrique Silva</a>", "<a target='_blank' href='https://github.com/ManuelSIlvaCav'>ManuelSilvaCav</a>", "<a href='mailto:mesilva2@uc.cl' target='_top'>mesilva2@uc.cl</a>"]
+          ] %>
+
+<ul class="reviews">
+  <% data.each do |record| %>
+    <li>
+      <% record.each do |text| %>
+        <div class="text-center col-xs-4">
+          <%= text.html_safe %>
+        </div>
+      <% end %>
+    </li>
+  <% end %>
+</ul>

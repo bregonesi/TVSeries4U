@@ -1,0 +1,11 @@
+<%= form_for @lista + [@nnew] do |f| %>
+  <%= render "shared/error_messages", object: @nnew %>
+
+  <div class="field">
+    <%= f.label :title %>
+    <%= f.text_field :title, class: "form-control" %>
+    <%= f.label :body %>
+    <%= f.text_area :body, class: "form-control" %>
+  </div>
+  <%= f.submit @nnew.id.nil? ? yield(:submit_new_text_news) : yield(:submit_edit_text_news), class: "btn btn-primary" %>
+<% end %>

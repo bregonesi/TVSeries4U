@@ -1,0 +1,41 @@
+<% provide(:title, "Director #{@director.full_name}") %>
+
+<div class="row">
+  <div class="col-md-4">
+    <div class="user_info">
+      <div>
+        <h4 class="h-title text-center">
+          <div></div>
+		  <ls>
+		    <%= @director.full_name %>
+		  </ls>
+		  <div></div>
+        </h4>
+      </div>
+      <hr>
+  	  <%= render "directors/follow_button" if logged_in %>
+      <% if logged_in && current_user.admin %>
+        <br>
+        <%= link_to "Edit Director", edit_director_path(@director), class: "btn btn-default col-xs-12"%>
+        <br><br><br>
+        <%= link_to "Delete Director", @director, method: :delete, data: {confirm: "Are you sure?"}, class: "btn btn-danger col-xs-12"%>
+      <%end%>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <ul class="nav nav-tabs nav-justified">
+      <li class="active"><a data-toggle="tab" href="#series">Series (<%= @director.series.count %>)</a></li>
+      <li><a data-toggle="tab" href="#news">News (<%= @director.news.count %>)</a></li>
+    </ul>
+
+    <div class="tab-content">
+      <div id="series" class="tab-pane fade in active">
+  	    <%= render "series/serie", :@series => @director.series %>
+      </div>
+      <div id="news" class="tab-pane fade">
+  	    <% provide(:name, "director") %>
+	    <%= render "shared/news", :@class => @director %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+<% if @invitations.empty? %>
+  <h5 class="text-center">No invitations to show.</h3>
+<% end %>
+
+<ul class="users">
+  <% @invitations.each do |invitation| %>
+  	<% user = invitation.user %>
+    <li class="h-title">
+      <%= link_to "#{user.name} as #{invitation.parent ? 'parent' : 'child'}", user %>
+      <% if logged_in && ((user.is_invited?(current_user.family) && current_user.is_parent? && invitation.family == current_user.family) || user == current_user || current_user.admin?) %>
+        <div>
+          <% if current_user == invitation.user %>
+            <%= link_to "Accept", family_family_members_path(invitation.family), method: :create, data: { confirm: "You sure?" }, class: "btn btn-xs btn-success"%>
+          <% end %>
+          <%= link_to "Delete Invitation", family_family_invite_path(invitation.family, invitation), method: :delete, data: { confirm: "You sure?" }, class: "btn btn-xs btn-danger"%>
+        </div>
+      <% end %>
+    </li>
+  <% end %>
+</ul>

@@ -1,0 +1,182 @@
+<% provide(:title, "New Serie") %>
+<% provide(:submit_text, "Add Serie") %>
+
+<h1>New Serie</h1>
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+  <%= form_for @serie do |f| %>
+    <%= render "shared/error_messages", object: @serie %>
+
+    <%= f.label :titulo %>
+    <%= f.text_field :title, class: "form-control" %>
+
+    <%= f.label :description %>
+    <%= f.text_area :description, class: "form-control" %>
+
+    <%= f.label :age %>
+    <%= f.number_field :age, min: 1, class: "form-control" %>
+
+    <%= f.label :genre %>
+    <%= collection_select(:genres, :id, Genre.all, :id, :name,
+                          {include_blank: false, :include_hidden => false, :selected => @serie.genres.map(&:id)},
+                          {multiple: true}) %>
+
+    <%= f.label :country %>
+    <%= collection_select(:countries, :id, Country.all, :id, :name,
+                          {include_blank: false, :include_hidden => false, :selected => @serie.countries.map(&:id)},
+                          {multiple: true}) %>
+
+    <%= f.label :language %>
+    <%= collection_select(:languages, :id, Language.all, :id, :name,
+                          {include_blank: false, :include_hidden => false, :selected => @serie.languages.map(&:id)},
+                          {multiple: true}) %>
+
+    <%= f.label :subtitles %>
+    <%= collection_select(:subtitles, :id, Language.all, :id, :name,
+                          {include_blank: false, :include_hidden => false, :selected => @serie.subtitles.map(&:id)},
+                          {multiple: true}) %>
+
+    <%= f.label :actores %>
+    <%= collection_select(:actors, :id, Actor.all, :id, :full_name,
+                          {include_blank: false, :include_hidden => false, :selected => @serie.actors.map(&:id)},
+                          {multiple: true}) %>
+
+    <%= f.label :director %>
+    <%= collection_select(:directors, :id, Director.all, :id, :full_name,
+                          {include_blank: false, :include_hidden => false, :selected => @serie.directors.map(&:id)},
+                          {multiple: true}) %>
+
+    <%= f.label :available %>
+    <div class="row">
+      <div class="col-xs-12 h-title">
+        <% if current_user.admin? %>
+          <%= f.label :available, class: "radio-inline" do %>
+            <%= f.radio_button :available, 2 %>
+            Global
+          <% end %>
+        <% end %>
+        <% if current_user.has_family? %>
+          <%= f.label :available, class: "radio-inline" do %>
+            <%= f.radio_button :available, 1 %>
+            Family
+          <% end %>
+        <% end %>
+        <%= f.label :available, class: "radio-inline" do %>
+          <%= f.radio_button :available, 0 %>
+          Only me
+        <% end %>
+      </div>
+    </div>
+
+    <hr>
+
+    <div>
+      <div id="carousel-sugg" class="col-md-6 thumbnail carousel slide text-center" data-ride="carousel" data-interval="false">
+        <%= f.label "Suggested images", class: "text-center" %>
+        <br>
+        <div id="carousel-imgs" class="carousel-inner">
+          <div class='item active serie_image'>
+            <%= image_tag "original/missing.png", class: "serie-home"%>
+          </div>
+        </div>
+        <hr>
+        <div>
+          <div class="col-xs-6">
+            <a class="btn btn-default col-xs-12" href="#carousel-sugg" data-slide="prev">
+              <span class="glyphicon glyphicon-chevron-left" aria-hidden="true" title="Previous"></span>
+              Previous
+            </a>
+          </div>
+          <div class="col-xs-6">
+            <a class="btn btn-default col-xs-12" href="#carousel-sugg" data-slide="next">
+              <span class="glyphicon glyphicon-chevron-right" aria-hidden="true" title="Next"></span>
+              Next
+            </a>
+          </div>
+        </div>
+        <br><br><br>
+        <div class="text-center">
+          <label class="btn btn-default btn-circle btn-lg active">
+            <input type="radio" name="sugg_img_check" value="1">
+            <i class="glyphicon glyphicon-ok"></i>
+          </label>
+        </div>
+      </div>
+      <div class="col-md-6 thumbnail text-center">
+        <%= f.label "Upload image", class: "text-center" %>
+        <br>
+        <div class="serie_image">
+          <%= image_tag @serie.serie_image.url, class: "serie-home"%>
+        </div>
+        <hr>
+        <div>
+          <div class="col-xs-12">
+            <%= f.file_field :serie_image, class: "form-control" %>
+          </div>
+        </div>
+        <br><br><br>
+        <div class="text-center">
+          <label class="btn btn-default btn-circle btn-lg">
+            <input type="radio" name="sugg_img_check" value="0">
+            <i class="glyphicon glyphicon-ok"></i>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <%= hidden_field_tag "suggested[sugg_img]", "1" %>
+    <%= hidden_field_tag "suggested[url]" %>
+    
+    <%= f.submit yield(:submit_text), class: "btn btn-primary" %>
+  <% end %>
+  </div>
+</div>
+
+<script>
+  $(function () {
+    $("input[name='sugg_img_check']").click(function () {
+        $("label.active").each(function() {
+          $(this).removeClass("active")
+        });
+        $('#suggested_sugg_img').val($(this).val());
+        $(this).parent().addClass("active") 
+    });
+  });
+
+  $("#serie_title").focusout(function() {
+    var url = "https://www.googleapis.com/customsearch/v1?q=" + $(this).val() + "+serie+cover&start=1&key=AIzaSyA4TZMAGgAJnGdPAAdkCM5bigyfCxFJKkY&cx=003961033777050319669:8i5fgh78gii&searchType=image&filter=0"
+    /*&imgSize=large*/
+    var items = [];
+
+    var google_json = $.getJSON(url, function( data ) {
+      $.each(data, function(key, val) {
+        if(key == "items") {
+          for(i in val) {
+            var item = val[i];
+            items.push(item["link"]);
+          }
+        }
+      });
+    });
+
+    google_json.complete(function() {
+      $("#carousel-imgs").empty();
+      var first = true;
+      for(i in items) {
+        $("#carousel-imgs").append("<div class='item" + (first ? " active" : "") + " serie_image'><img class='serie-home' src='" + items[i] + "'></div>");
+        first = false;
+      }
+    });
+  });
+
+  $('.new_serie').submit(function() {
+    $("#carousel-imgs").children("div").each(function() {
+      if($(this).hasClass("active")) {
+        $('#suggested_url').val($(this).find("img").attr("src"));
+        return true;
+      }
+    });
+
+    return true;
+  });
+</script>

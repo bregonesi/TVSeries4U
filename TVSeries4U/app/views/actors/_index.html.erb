@@ -1,0 +1,18 @@
+<%= will_paginate @actors %>
+
+<% if @actors.empty? %>
+  <h5 class="text-center">No actors to show.</h3>
+<% end %>
+
+<ul class="actors">
+  <% @actors.each do |actor| %>
+    <li class="h-title">
+      <%= link_to actor.full_name, actor %>
+      <% if logged_in && current_user.admin? %>
+        <%= link_to "Delete Actor", actor, method: :delete, data: { confirm: "You sure?" }, class: "btn btn-xs btn-danger"%>
+      <% end %>
+    </li>
+  <% end %>
+</ul>
+
+<%= will_paginate @actors %>

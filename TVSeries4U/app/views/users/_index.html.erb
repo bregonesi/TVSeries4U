@@ -1,0 +1,23 @@
+<%= will_paginate @users %>
+
+<% if @users.empty? %>
+  <h5 class="text-center">No users to show.</h3>
+<% end %>
+
+<ul class="users">
+  <% @users.each do |user| %>
+    <li class="h-title">
+      <div>
+      	<%= gravatar_for user, size: 50 %>
+      	<%= link_to user.name, user %>
+      </div>
+      <div>
+        <% if logged_in && current_user.admin? && !current_user?(user) %>
+          <%= link_to "Delete User", user, method: :delete, data: { confirm: "You sure?" }, class: "btn btn-xs btn-danger pull-right"%>
+        <% end %>
+  	  </div>
+    </li>
+  <% end %>
+</ul>
+
+<%= will_paginate @users %>

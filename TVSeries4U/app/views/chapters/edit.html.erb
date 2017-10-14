@@ -1,0 +1,12 @@
+<% provide(:title, "Edit Chapter #{@chapter.name}") %>
+<% provide(:submit_text, "Save changes") %>
+
+<% content_for :show_serie_content do %>
+  <h1>Edit Chapter: <%= @chapter.name %></h1>
+  <%= render "form" %>
+<% end %>
+
+<%= render "series/show" %>
+
+
+

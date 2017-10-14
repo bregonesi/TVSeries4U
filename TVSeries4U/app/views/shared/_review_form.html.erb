@@ -1,0 +1,27 @@
+<%= form_for @lista + [@review] do |f| %>
+  <%= render "shared/error_messages", object: @review %>
+
+  <div class="field">
+    <%= f.label "Rate" %>
+    <div id="star-rating"></div>
+    <br>
+    <%= f.label :comment %>
+    <%= f.text_area :comment, class: "form-control" %>
+    <%= f.hidden_field :rating, id: "rating" %>
+  </div>
+  <%= f.submit yield(:submit_text), class: "btn btn-primary" %>
+<% end %>
+
+
+<script>
+  $("#star-rating").empty().raty({
+    path: "/assets/",
+    score: <%= @review.rating || 0 %>,
+    scoreName: "stars",
+    /*precision: true,
+    round: { down: .5, full: .6, up: .51 },*/
+    click: function(score, evt) {
+      $("#rating").val(score);
+    }
+  });
+</script>

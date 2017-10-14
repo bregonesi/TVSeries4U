@@ -1,0 +1,81 @@
+<% if !logged_in%>
+  <div class="jumbotron text-center">
+    <div class="container">
+      <h1>Welcome to TVSeries4u</h1>
+      <%= link_to "Sign up now!", signup_path, class: "btn btn-lg btn-primary" %>
+      <%= link_to "Log In", login_path, class: "btn btn-lg btn-primary" %>
+    </div>
+  </div>
+<% end %>
+
+<div class="container-fluid" style="padding-top: 10px;">
+  <div class="row">
+    <aside class="col-md-3">
+      <%= form_tag root_path, :method => "get", id: "advance-search-form" do %>
+          <%= label_tag "Serie name" %>
+          <%= text_field_tag :serie_search, params[:serie_search] || params[:serie_name] == "1" && params[:search] || nil, placeholder: "Serie Name", class: "form-control" %>
+
+          <%= label_tag "Genre" %>
+          <%= text_field_tag :genre_search, params[:genre_search] || params[:genres] == "1" && params[:search] || nil, placeholder: "Genre", class: "form-control" %>
+
+          <%= label_tag "Actor name" %>
+          <%= text_field_tag :actor_search, params[:actor_search] || params[:actors] == "1" && params[:search] || nil, placeholder: "Actor Name", class: "form-control" %>
+
+          <%= label_tag "Director name" %>
+          <%= text_field_tag :director_search, params[:director_search] || params[:directors] == "1" && params[:search] || nil, placeholder: "Director Name", class: "form-control" %>
+
+          <%= label_tag "Country name" %>
+          <%= text_field_tag :country_search, params[:country_search] || params[:countries] == "1" && params[:search] || nil, placeholder: "Country Name", class: "form-control" %>
+
+          <%= label_tag "Language (audio)" %>
+          <%= text_field_tag :language_search, params[:language_search] || params[:languages] == "1" && params[:search] || nil, placeholder: "Language (audio)", class: "form-control" %>
+
+          <%= label_tag "Subtitle" %>
+          <%= text_field_tag :subtitle_search, params[:subtitle_search] || params[:subtitles] == "1" && params[:search] || nil, placeholder: "Subtitles", class: "form-control" %>
+
+          <div class="row">
+            <div class="col-xs-6 text-center">
+              <%= label_tag "Age min" %>
+              <%= number_field_tag :age_min_search, params[:age_min_search], min: 0, placeholder: "Age min", class: "form-control" %>
+            </div>
+
+            <div class="col-xs-6 text-center">
+              <%= label_tag "Age max" %>
+              <%= number_field_tag :age_max_search, params[:age_max_search], min: 0, placeholder: "Age max", class: "form-control" %>
+            </div>
+          </div>
+
+          <%= label_tag "Rating min" %>
+          <div class="text-center">
+            <div id="star-rating-min"></div>
+          </div>
+          <br>
+          <%= label_tag "Rating max" %>
+          <div class="text-center">
+            <div id="star-rating-max"></div>
+          </div>
+          <br>
+
+          <%= button_tag "Search", :name => nil, class: "btn btn-default col-xs-10 col-xs-offset-1" %>
+      <% end %>
+    </aside>
+
+    <div class="col-md-9 no-gutters">
+        <%= render 'series/serie', series: @series %>
+    </div>
+  </div>
+</div>
+
+<script>
+  $("#star-rating-min").empty().raty({
+    path: "/assets/",
+    score: <%= params[:stars_min].to_i || 0 %>,
+    scoreName: "stars_min"
+  });
+
+  $("#star-rating-max").empty().raty({
+    path: "/assets/",
+    score: <%= params[:stars_max].to_i || 0 %>,
+    scoreName: "stars_max"
+  });
+</script>

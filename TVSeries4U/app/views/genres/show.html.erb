@@ -1,0 +1,36 @@
+<% provide(:title, "Genre #{@genre.name}") %>
+
+<div class="row">
+  <div class="col-md-4">
+    <div class="user_info">
+      <div>
+        <h4 class="h-title text-center">
+          <div></div>
+		      <ls>
+		        <%= @genre.name %>
+		      </ls>
+		      <div></div>
+        </h4>
+      </div>
+      <hr>
+  	  <%= render "genres/follow_button" if logged_in %>
+      <% if logged_in && current_user.admin %>
+        <br>
+        <%= link_to "Edit Genre", edit_genre_path(@genre), class: "btn btn-default col-xs-12"%>
+        <br><br><br>
+        <%= link_to "Delete Genre", @genre, method: :delete, data: {confirm: "Are you sure?"}, class: "btn btn-danger col-xs-12"%>
+      <%end%>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <ul class="nav nav-tabs nav-justified">
+      <li class="active"><a data-toggle="tab" href="#series">Series (<%= @genre.series.count %>)</a></li>
+    </ul>
+
+    <div class="tab-content">
+      <div id="series" class="tab-pane fade in active">
+  	    <%= render "series/serie", :@series => @genre.series %>
+      </div>
+    </div>
+  </div>
+</div>

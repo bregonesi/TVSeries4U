@@ -1,0 +1,29 @@
+<% provide(:title, 'All families') %>
+
+<% if logged_in && !current_user.has_family? %>
+  <br>
+  <div>
+    <%= link_to "New family", new_family_path, class: "btn btn-success" %>
+  </div>
+<% end %>
+
+<h1>All families</h1>
+
+<%= will_paginate %>
+
+<% if @families.empty? %>
+  <h5 class="text-center">No families to show.</h3>
+<% end %>
+
+<ul class="families">
+  <% @families.each do |family| %>
+    <li class="h-title">
+      <%= link_to family.name, family %>
+      <% if logged_in and (current_user.family == family or current_user.admin?) %>
+        <%= link_to "Delete Family", family, method: :delete, data: { confirm: "You sure?" }, class: "btn btn-xs btn-danger pull-right"%>
+      <% end %>
+    </li>
+  <% end %>
+</ul>
+
+<%= will_paginate %>

@@ -1,0 +1,12 @@
+<% provide(:title, "New Chapter") %>
+<% provide(:submit_text, "Add Chapter") %>
+
+<% content_for :show_serie_content do %>
+  <h1>Chapter Season</h1>
+  <%= render "form" %>
+<% end %>
+
+<%= render "series/show" %>
+
+
+

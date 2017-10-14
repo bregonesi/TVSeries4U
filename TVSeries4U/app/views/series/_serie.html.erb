@@ -1,0 +1,153 @@
+<br>
+<div class="row text-center">
+  <% if @series.empty? %>
+    <h3 class="text-center">No series to show.</h3>
+  <% end %>
+
+  <% if !@series.empty? %>
+    <div id="series-sort" class="col-xs-12">
+      <div class="pull-right">
+        Sort by:
+        <!-- Genero -->
+        <!--
+        <%= button_tag class: "btn btn-xs btn-default" do %>
+          <% if params[:genre_sort] %>
+            <%= link_to params.permit!.except(:genre_sort), style: "color: #a94442 !important;" do %>
+              <span class="glyphicon glyphicon-remove" aria-hidden="true" title="Descendent"></span>
+            <% end %>
+          </span>
+          <% end %>
+          <%= link_to params.permit!.merge(genre_sort: params[:genre_sort] == "desc" ? "asc" : "desc") do %>
+            Genre
+            <% if params[:genre_sort] == "asc" %>
+              <span class="glyphicon glyphicon-arrow-up" aria-hidden="true" title="Ascendant"></span>
+            <% else %>
+              <span class="glyphicon glyphicon-arrow-down" aria-hidden="true" title="Descendant"></span>
+            <% end %>
+          <% end %>
+        <% end %>
+        -->
+        
+        <!-- # Seasons -->
+        <%= button_tag class: "btn btn-xs btn-default" do %>
+          <% if params[:seasons_sort] %>
+            <%= link_to params.permit!.except(:seasons_sort), style: "color: #a94442 !important;" do %>
+              <span class="glyphicon glyphicon-remove" aria-hidden="true" title="Descendent"></span>
+            <% end %>
+          </span>
+          <% end %>
+          <%= link_to params.permit!.merge(seasons_sort: params[:seasons_sort] == "desc" ? "asc" : "desc") do %>
+            # Seasons
+            <% if params[:seasons_sort] == "asc" %>
+              <span class="glyphicon glyphicon-arrow-up" aria-hidden="true" title="Ascendant"></span>
+            <% else %>
+              <span class="glyphicon glyphicon-arrow-down" aria-hidden="true" title="Descendant"></span>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <!-- # Chapters -->
+        <%= button_tag class: "btn btn-xs btn-default" do %>
+          <% if params[:chapters_sort] %>
+            <%= link_to params.permit!.except(:chapters_sort), style: "color: #a94442 !important;" do %>
+              <span class="glyphicon glyphicon-remove" aria-hidden="true" title="Descendent"></span>
+            <% end %>
+          </span>
+          <% end %>
+          <%= link_to params.permit!.merge(chapters_sort: params[:chapters_sort] == "desc" ? "asc" : "desc") do %>
+            # Chapters
+            <% if params[:chapters_sort] == "asc" %>
+              <span class="glyphicon glyphicon-arrow-up" aria-hidden="true" title="Ascendant"></span>
+            <% else %>
+              <span class="glyphicon glyphicon-arrow-down" aria-hidden="true" title="Descendant"></span>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <!-- Rating -->
+        <%= button_tag class: "btn btn-xs btn-default" do %>
+          <% if params[:rating_sort] %>
+            <%= link_to params.permit!.except(:rating_sort), style: "color: #a94442 !important;" do %>
+              <span class="glyphicon glyphicon-remove" aria-hidden="true" title="Descendent"></span>
+            <% end %>
+          </span>
+          <% end %>
+          <%= link_to params.permit!.merge(rating_sort: params[:rating_sort] == "desc" ? "asc" : "desc") do %>
+            Rating <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+            <% if params[:rating_sort] == "asc" %>
+              <span class="glyphicon glyphicon-arrow-up" aria-hidden="true" title="Ascendant"></span>
+            <% else %>
+              <span class="glyphicon glyphicon-arrow-down" aria-hidden="true" title="Descendant"></span>
+            <% end %>
+          <% end %>
+        <% end %>
+
+      </div>
+    </div>
+
+    <br>
+    <hr>
+
+    <% if params[:rating_sort] == "desc" %>
+      <% @series = @series.order("rating DESC") %>
+    <% elsif params[:rating_sort] == "asc" %>
+      <% @series = @series.order("rating ASC") %>
+    <% end %>
+
+    <% if params[:chapters_sort] == "desc" %>
+      <% @series = @series.joins("LEFT JOIN seasons ON series.id = seasons.serie_id LEFT JOIN chapters ON seasons.id = chapters.season_id").order("COUNT(chapters.id) DESC").group("series.id") %>
+    <% elsif params[:chapters_sort] == "asc" %>
+      <% @series = @series.joins("LEFT JOIN seasons ON series.id = seasons.serie_id LEFT JOIN chapters ON seasons.id = chapters.season_id").order("COUNT(chapters.id) ASC").group("series.id") %>
+    <% end %>
+
+    <% if params[:seasons_sort] == "desc" %>
+      <% if !(params[:chapters_sort] == "desc" || params[:chapters_sort] == "asc") %>
+        <% @series = @series.joins("LEFT JOIN seasons ON series.id = seasons.serie_id") %>
+      <% end %>
+      <% @series = @series.order("COUNT(seasons.id) DESC").group("series.id") %>
+    <% elsif params[:seasons_sort] == "asc" %>
+      <% if !(params[:chapters_sort] == "desc" || params[:chapters_sort] == "asc") %>
+        <% @series = @series.joins("LEFT JOIN seasons ON series.id = seasons.serie_id") %>
+      <% end %>
+      <% @series = @series.order("COUNT(seasons.id) ASC").group("series.id") %>
+    <% end %>
+
+
+    <div class="no-gutters">
+      <% @series.each do |serie| %>
+        <!-- <div class="col-xs-7 col-sm-4 col-md-3 col-lg-2"> -->
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-3">
+          <div class="thumbnail">
+            <div class="serie_image">
+              <%= image_tag serie.serie_image.url, class: "serie-home"%>
+            </div>
+            <strong><%= serie.title %></strong>
+            <br>
+            <div class="contenedor-star">
+              <div class="fill_stars_rating" data-score=<%= serie.rating %>></div>
+            </div>
+            <% if logged_in %>
+              <% if serie.saw_by?(current_user) == 2 %>
+                <span class="glyphicon glyphicon-eye-open" aria-hidden="true" title="Seen serie"></span>
+              <% else %>
+                <span class="glyphicon glyphicon-eye-close" aria-hidden="true" title="Not seen serie"></span>
+              <% end %>
+            <% end %>
+            <hr>
+            <%= link_to "View", serie_path(serie), class: "btn-view" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  $('.fill_stars_rating').empty().raty({
+    path: '/assets/',
+    readOnly: true,
+    score: function(){
+      return $(this).attr('data-score');
+    }
+  });
+</script>

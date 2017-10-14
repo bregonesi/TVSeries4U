@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  number: 1
+  serie: one
+  name: MyString
+  description: MyText
+  release: 2017-05-29
+
+two:
+  number: 1
+  serie: two
+  name: MyString
+  description: MyText
+  release: 2017-05-29

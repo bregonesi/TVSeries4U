@@ -1,0 +1,49 @@
+<% @lista = [] %>
+<% @lista << @serie if params[:serie_id] %>
+<% @lista << @actor if params[:actor_id] %>
+<% @lista << @director if params[:director_id] %>
+<% @lista << @class if @nnew.nil? and !request.path_info.include?("sreviews") %>
+
+<ul class="news">
+  <% if @class.news.empty? %>
+    <li>
+      <h2>There are no news for this <%= yield(:name).downcase %>.</h2>
+    </li>
+  <% end %>
+
+  <% @class.news.all.each do |nnew| %>
+    <li>
+      <div class="col-xs-2">
+        <%= nnew.user.name %>
+      </div>
+      <div class="h-title col-xs-10">
+        <% if !logged_in || logged_in && (!current_user?(nnew.user) && !current_user.admin?) %>
+          <%= simple_format(raw nnew.body) %>
+        <% elsif logged_in && (current_user?(nnew.user) || current_user.admin?) %>
+          <% if !@nnew.nil? && nnew.id == @nnew.id %>
+            <% provide(:submit_edit_text_news, "Save changes") %>
+            <%= render "shared/news_form", :@nnew => @nnew || @class.news.build %>
+          <% else %>
+            <%= simple_format(raw nnew.body) %>
+            <div>
+              <%= link_to "Edit New", polymorphic_url(@lista + [nnew], {only_path: true, action: "edit"}), class: "btn btn-success btn-xs" %>
+              <%= link_to "Delete New", polymorphic_url(@lista + [nnew], {only_path: true}), method: :delete, data: {confirm: "Are you sure?"}, class: "btn btn-danger btn-xs" %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </li>
+  <% end %>
+</ul>
+
+<% if logged_in %>
+  <hr>
+
+  <h3>New News</h3>
+  <% provide(:submit_new_text_news, "Add News") %>
+  <% if !request.path_info.include?("edit") %>
+    <%= render "shared/news_form", :@nnew => @nnew || @class.news.build %>
+  <% else %>
+    <%= render "shared/news_form", :@nnew => @class.news.build %>
+  <% end %>
+<% end %>

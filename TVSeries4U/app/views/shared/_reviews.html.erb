@@ -1,0 +1,65 @@
+<% @lista = [] %>
+<% @lista << @serie if params[:serie_id] %>
+<% @lista << @season if params[:season_id] %>
+<% @lista << @chapter if params[:chapter_id] %>
+<% @lista << @class if @review.nil? and !request.path_info.include?("series_news") %>
+
+<ul class="reviews">
+  <% if @class.reviews.empty? %>
+    <li>
+      <h2>There are no reviews for this <%= yield(:name).downcase %>.</h2>
+    </li>
+  <% end %>
+
+  <% @class.reviews.all.each do |review| %>
+    <li>
+      <div class="col-xs-2">
+        <%= review.user.name %>
+        <br>
+        <% if !logged_in || (logged_in && !current_user?(review.user) && !@serie.can_edit(current_user)) ||
+          !(!current_user?(review.user) && !@serie.can_edit(current_user)) && !(!@review.nil? && review.id == @review.id) %>
+          <div class="fill_stars_rating" data-score=<%= review.rating %>></div>
+        <% end %>
+      </div>
+      <div class="h-title col-xs-10">
+        <% if !logged_in || (!current_user?(review.user) && !@serie.can_edit(current_user)) %>
+          <%= simple_format(raw review.comment) %>
+        <% else %>
+          <% if !@review.nil? && review.id == @review.id %>
+            <% provide(:submit_text, "Save changes") %>
+            <%= render "shared/review_form", :@review => @review || @class.reviews.build %>
+          <% else %>
+            <%= simple_format(raw review.comment) %>
+            <div>
+              <%= link_to "Edit Review", polymorphic_url(@lista + [review], {only_path: true, action: "edit"}), class: "btn btn-success btn-xs" %>
+              <%= link_to "Delete Review", polymorphic_url(@lista + [review], {only_path: true}), method: :delete, data: {confirm: "Are you sure?"}, class: "btn btn-danger btn-xs" %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </li>
+  <% end %>
+</ul>
+
+<% if logged_in %>
+  <hr>
+
+  <h3>New Review</h3>
+  <% if @class.user_reviews.include?(current_user) %>
+    <h2>You can only review once. If you want, you can edit your review.</h2>
+  <% else %>
+    <% provide(:submit_text, "Add Review") %>
+    <%= render "shared/review_form", :@review => @review || @class.reviews.build %>
+  <% end %>
+<% end %>
+
+<script>
+  $('.fill_stars_rating').empty().raty({
+    path: '/assets/',
+    readOnly: true,
+    width: auto,
+    score: function(){
+      return $(this).attr('data-score');
+    }
+  });
+</script>

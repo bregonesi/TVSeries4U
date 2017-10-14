@@ -1,0 +1,2 @@
+module ActorsNewsHelper
+end

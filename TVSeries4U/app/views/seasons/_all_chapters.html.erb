@@ -1,0 +1,40 @@
+<ul class="list-group">
+ <% @season.chapters.sort_by { |chapter| [chapter.number]}.each do |chapter| %>
+  <li class="list-group-item h-title">
+   <div>
+    <% if logged_in %>
+     <% if chapter.saw_by?(current_user) %>
+      <span class="glyphicon glyphicon-eye-open" aria-hidden="true" title="Seen chapter"></span>
+     <% else %>
+      <span class="glyphicon glyphicon-eye-close" aria-hidden="true" title="Not seen chapter"></span>
+     <% end %>
+    <% end %>
+
+    <%= "Chapter #{chapter.number}: #{chapter.name}. #{pluralize(chapter.length, 'minute')} " %>
+   </div>
+
+   <div>
+    <div class="fill_stars_rating" data-score=<%= chapter.rating %>></div>
+   </div>
+
+   <div>
+    <small>
+     <%= link_to "(More info)", serie_season_chapter_path(@serie, @season, chapter) %>
+    </small>
+    <% if @serie.can_edit(current_user) %>
+     <%= link_to "Edit Chapter", edit_serie_season_chapter_path(@serie, @season, chapter), class: "btn btn-success btn-xs" %>
+    <% end %>
+   </div>
+  </li>
+ <% end %>
+</ul>
+
+<script>
+  $('.fill_stars_rating').empty().raty({
+    path: '/assets/',
+    readOnly: true,
+    score: function(){
+      return $(this).attr('data-score');
+    }
+  });
+</script>

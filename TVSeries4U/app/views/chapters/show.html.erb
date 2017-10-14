@@ -1,0 +1,38 @@
+<% content_for :show_serie_content do %>
+  <h2>Chapter #<%= @chapter.number %>: <%= !@chapter.name.empty? && @chapter.name || "Name not available" %>
+    <br>
+    <div class="contenedor-star">
+      <div class="fill_stars_rating" data-score=<%= @chapter.rating %>></div>
+    </div>
+
+    <% if logged_in %>
+     <% if !@chapter.saw_by?(current_user) %>
+      <%= link_to "Mark as seen", serie_season_chapter_seens_path(@serie, @season, @chapter), method: :create, class: "btn btn-success btn-xs" %>
+     <% else %>
+      <%= link_to "Mark as un-seen", serie_season_chapter_seen_path(@serie, @season, @chapter), method: :delete, class: "btn btn-danger btn-xs" %>
+     <% end %>
+    <% end %>
+  </h2>
+  <h5><%= !@chapter.description.empty? && @chapter.description || "Description not available" %></h3>
+  <br>
+  <h4>Length: <%= pluralize(@chapter.length, "minute") %></h4>
+  <h4>Release on: <%= @chapter.release || "Date not available" %></h4>
+  <hr>
+
+  <h3>Reviews</h3>
+  <div>
+    <% provide(:name, "season") %>
+    <%= render "shared/reviews", :@class => @chapter %>
+  </div>
+
+  <hr>
+
+  <%= link_to "Return to #{@season.name}", serie_season_path(@serie, @season), class: "btn btn-primary" %>
+  <% if @serie.can_edit(current_user) %>
+    <%= link_to "Edit Chapter", edit_serie_season_chapter_path(@serie, @season, @chapter), class: "btn btn-success pull-right" %>
+  <% end %>
+<% end %>
+
+
+
+<%= render "series/show" %>

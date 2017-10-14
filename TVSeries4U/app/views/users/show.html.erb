@@ -1,0 +1,72 @@
+<% provide(:title, @user.name) %>
+<div class="row">
+  <div class="col-md-4">
+    <div class="user_info">
+      <div>
+        <h4 class="h-title text-center">
+          <%= gravatar_for @user %>
+          <div>
+            <ls>
+              <%= @user.name %>, <%= edad(@user.birth) %>
+            </ls>
+            <% if @user.has_family? %>
+              <br>
+              <small class="pull-left">
+                <%= link_to "Family: #{@user.family.name}", family_path(@user.family) %>
+              </small>
+            <% end %>
+          </div>
+          <div></div>
+        </h4>
+      </div>
+      <%= render "show_invites" if current_user == @user and @user.has_invites? %>
+      <hr>
+      <%= render "resume_buttons" if current_user == @user %>
+      <%= render "follow_button" if logged_in %>
+      <%= render "family_buttons" if logged_in and current_user.has_family? and !@user.has_family? and current_user.is_parent? %>
+      
+      <% if logged_in %>
+        <hr>
+      <% end %>
+
+      <h4 class="text-center">Follow</h4>
+
+      <ul class="nav nav-tabs nav-justified">
+        <li class="active"><a data-toggle="tab" href="#fav_users">Users (<%= @user.active_relationships.count %>)</a></li>
+        <li><a data-toggle="tab" href="#fav_actors">Actors (<%= @user.actors_relationship.count %>)</a></li>
+        <li><a data-toggle="tab" href="#fav_directors">Directors (<%= @user.directors_relationship.count %>)</a></li>
+        <li><a data-toggle="tab" href="#fav_genres">Genres (<%= @user.genres_relationship.count %>)</a></li>
+      </ul>
+
+      <div class="tab-content">
+        <div id="fav_users" class="tab-pane fade in active">
+          <%= render "users/index", :@users => @user.following.paginate(page: params[:page_actors]) %>
+        </div>
+        <div id="fav_actors" class="tab-pane fade">
+          <%= render "actors/index", :@actors => @user.following_actors.paginate(page: params[:page_actors]) %>
+        </div>
+        <div id="fav_directors" class="tab-pane fade">
+          <%= render "directors/index", :@directors => @user.following_directors.paginate(page: params[:page_directors]) %>
+        </div>
+        <div id="fav_genres" class="tab-pane fade">
+          <%= render "genres/index", :@genres => @user.following_genres.paginate(page: params[:page_genres]) %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <ul class="nav nav-tabs nav-justified">
+      <li class="active"><a data-toggle="tab" href="#series">Series (<%= @user.following_series.count %>)</a></li>
+      <li><a data-toggle="tab" href="#news">News (<%= @news.count %>)</a></li>
+    </ul>
+
+    <div class="tab-content">
+      <div id="series" class="tab-pane fade in active">
+        <%= render 'series/serie', :@series => @user.following_series %>
+      </div>
+      <div id="news" class="tab-pane fade">
+        <%= render 'news_feed/index' %>
+      </div>
+    </div>
+  </div>
+</div>

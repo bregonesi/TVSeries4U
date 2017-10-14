@@ -1,0 +1,58 @@
+<% content_for :show_serie_content do %>
+  <h2><%= @serie.title %>
+    <br>
+    <div class="contenedor-star">
+      <div class="fill_stars_rating" data-score=<%= @serie.rating %>></div>
+    </div>
+
+    <% if logged_in %>
+     <% if @serie.saw_by?(current_user) == 2 %>
+      <span class="glyphicon glyphicon-eye-open" aria-hidden="true" title="Seen serie"></span>
+     <% else %>
+      <span class="glyphicon glyphicon-eye-close" aria-hidden="true" title="Not seen serie"></span>
+     <% end %>
+    <% end %>
+  </h2>
+  <h5><%= @serie.description %></h3>
+  <br>
+  <h4>Genre: <%= !@serie.genres.empty? ? @serie.genres.map(&:name).to_sentence : "Not available." %></h4>
+  <h4>Actores: <%= !@serie.actors.empty? ? @serie.actors.map(&:full_name).to_sentence : "Not available." %></h4> <!-- falta last_name -->
+  <h4>Director: <%= !@serie.directors.empty? ? @serie.directors.map(&:full_name).to_sentence : "Not available." %></h4>
+  <h4>Country: <%= !@serie.countries.empty? ? @serie.countries.map(&:name).to_sentence : "Not available." %></h4>
+  <br>
+  <h5>Minimun age: <%= @serie.age %></h5>
+  <h5>Language: <%= !@serie.languages.empty? ? @serie.languages.map(&:name).to_sentence : "Not available." %></h5>
+  <h5>Subtitles: <%= !@serie.subtitles.empty? ? @serie.subtitles.map(&:name).to_sentence : "Not available." %></h5>
+  <h5>End of serie: <%= !@serie.chapters.empty? ? @serie.chapters.order("chapters.release DESC").limit(1).map(&:release)[0] : "Not available." %></h5>
+
+  <hr>
+
+  <h3 class="h-title">
+    Seasons (<%= pluralize(@serie.seasons.count, "season") %> and <%= pluralize(@serie.chapters.count, "chapter") %>)
+    <% if @serie.can_edit(current_user) %>
+      <div>
+        <%= link_to "Add a Season", new_serie_season_path(@serie), class: "btn btn-primary btn-sm" %>
+      </div>
+    <% end %>
+  </h3>
+  <%= render "series/all_seasons" %>
+
+  <hr>
+  
+  <ul class="nav nav-tabs nav-justified">
+    <li class="active"><a data-toggle="tab" href="#reviews">Reviews</a></li>
+    <li><a data-toggle="tab" href="#news">News</a></li>
+  </ul>
+
+  <div class="tab-content">
+    <div id="reviews" class="tab-pane fade in active">
+      <%= render "shared/reviews", :@class => @serie %>
+    </div>
+    <div id="news" class="tab-pane fade">
+    <%= render "shared/news", :@class => @serie %>
+    </div>
+  </div>
+  
+<% end %>
+
+<%= render "series/show" %>
